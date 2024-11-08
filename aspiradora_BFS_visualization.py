@@ -4,9 +4,9 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from aspiradora_modelo import AspiradoraModelo
 
 # Cargar las imágenes
-aspiradora_img = plt.imread("images\w.png")
-celda_sucia_img = plt.imread("images\dust.png")
-background_img = plt.imread("images\wood.jpg")
+aspiradora_img = plt.imread("MultiAgent-Cleaning-Simulation\images\w.png")
+celda_sucia_img = plt.imread("MultiAgent-Cleaning-Simulation\images\dust.png")
+background_img = plt.imread("MultiAgent-Cleaning-Simulation\images\wood.jpg")
 
 def representar_aspiradoras_bfs(modelo):
     """Con esta funcion asignamos la posicion de nuestras aspiradoras y de las celdas sucias."""
@@ -20,7 +20,7 @@ def representar_aspiradoras_bfs(modelo):
     return posiciones_aspiradoras, celdas_sucias
 
 # Inicializamos nuestro modelo con BFS
-num_agentes = 2
+num_agentes = 1
 ancho = 10       
 alto = 10     
 porcentaje_sucio = 0.3

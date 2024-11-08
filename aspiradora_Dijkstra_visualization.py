@@ -4,10 +4,9 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from aspiradora_modelo import AspiradoraModelo
 
 # Cargar las imágenes
-aspiradora_img = plt.imread("images\w.png")
-celda_sucia_img = plt.imread("images\dust.png")
-background_img = plt.imread("images\wood.jpg")
-
+aspiradora_img = plt.imread("MultiAgent-Cleaning-Simulation\images\w.png")
+celda_sucia_img = plt.imread("MultiAgent-Cleaning-Simulation\images\dust.png")
+background_img = plt.imread("MultiAgent-Cleaning-Simulation\images\wood.jpg")
 
 def representar_aspiradoras_dijkstra(modelo):
     """Con esta función obtenemos la posición de las aspiradoras y de las celdas sucias."""
