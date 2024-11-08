@@ -1,5 +1,12 @@
 import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from aspiradora_modelo import AspiradoraModelo
+
+# Cargar las imágenes
+aspiradora_img = plt.imread("images\w.png")
+celda_sucia_img = plt.imread("images\dust.png")
+background_img = plt.imread("images\wood.jpg")
 
 def representar_aspiradoras_bfs(modelo):
     """Con esta funcion asignamos la posicion de nuestras aspiradoras y de las celdas sucias."""
@@ -34,15 +41,20 @@ for i in range(100):
     # Para que limpiemos el gráfico
     ax.clear()
 
-    # Mostramos nuestras celdas sucias como puntos rojos
-    if celdas_sucias:
-        x_sucias, y_sucias = zip(*celdas_sucias)
-        ax.scatter(x_sucias, y_sucias, color='red', label='Celdas Sucias', s=100)
+    # Establecemos la imagen de fondo
+    ax.imshow(background_img, extent=[-1, ancho, -1, alto], aspect='auto')
 
-    # Mostramos nuestras aspiradoras como los puntos azules
-    if posiciones_aspiradoras:
-        x_aspiradoras, y_aspiradoras = zip(*posiciones_aspiradoras)
-        ax.scatter(x_aspiradoras, y_aspiradoras, color='blue', label='Aspiradoras', s=200)
+    # Mostramos las celdas sucias como imágenes
+    for (x, y) in celdas_sucias:
+        imagebox = OffsetImage(celda_sucia_img, zoom=0.1)  # Ajusta zoom según tamaño
+        ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+        ax.add_artist(ab)
+
+    # Mostramos las aspiradoras como imágenes
+    for (x, y) in posiciones_aspiradoras:
+        imagebox = OffsetImage(aspiradora_img, zoom=0.05)  # Ajusta zoom según tamaño
+        ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+        ax.add_artist(ab)
 
     # Configuraciones de nuestro gráfico
     ax.set_xlim(-1, ancho)
@@ -69,15 +81,19 @@ completado, porcentaje_limpio, total_movimientos, tiempo_ejecucion = modelo_bfs.
 # Una vez que se haya terminado la simulación limpiamos el gráfico para enseñar los resultados
 ax.clear()
 
+ax.imshow(background_img, extent=[-1, ancho, -1, alto], aspect='auto')
+
 # Mostramos las celdas que quedaron sucias
 if modelo_bfs.celdas_sucias:
-    x_sucias, y_sucias = zip(*modelo_bfs.celdas_sucias)
-    ax.scatter(x_sucias, y_sucias, color='red', label='Celdas Sucias', s=100)
+    imagebox = OffsetImage(celda_sucia_img, zoom=0.1)
+    ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+    ax.add_artist(ab)
 
-# Mostramos a nuestras aspiradoras en su posición final
-if posiciones_aspiradoras:
-    x_aspiradoras, y_aspiradoras = zip(*posiciones_aspiradoras)
-    ax.scatter(x_aspiradoras, y_aspiradoras, color='blue', label='Aspiradoras', s=200)
+# Imágenes de aspiradoras en posición final
+for (x, y) in posiciones_aspiradoras:
+    imagebox = OffsetImage(aspiradora_img, zoom=0.05)
+    ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+    ax.add_artist(ab)
 
 # Configuraciones para mostrar los resultados obtenidos
 ax.set_xlim(-1, ancho)
