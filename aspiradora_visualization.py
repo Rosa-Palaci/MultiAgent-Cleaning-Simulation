@@ -1,9 +1,15 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from aspiradora_modelo import AspiradoraModelo
 
+# Cargar las imágenes
+aspiradora_img = plt.imread("images\w.png")
+celda_sucia_img = plt.imread("images\dust.png")
+background_img = plt.imread("images\wood.jpg")
+
 def representar_aspiradoras(modelo):
-    """Con esta funcion asignamos la posicion de nuestras aspiradoras y de las celdas sucias."""
+    """Función para obtener la posición de las aspiradoras y de las celdas sucias."""
     posiciones_aspiradoras = []
     celdas_sucias = modelo.celdas_sucias  
 
@@ -24,27 +30,31 @@ fig, ax = plt.subplots()
 
 # -------- INICIAMOS NUESTRA SIMULACIÓN --------------------
 
-# Número de pasos de nuestra simulación
 for i in range(100):
-    modelo.step()  # Vamos avanzando por pasos
+    modelo.step()  # Avanzamos un paso en la simulación
 
-    # Obtenemos las posiciones de nuestros agentes y de las celdas sucias
+    # Obtenemos posiciones de aspiradoras y celdas sucias
     posiciones_aspiradoras, celdas_sucias = representar_aspiradoras(modelo)
 
-    # Para que limpiemos el gráfico
+    # Limpiar el gráfico para la actualización
     ax.clear()
 
-    # Mostramos nuestras celdas sucias como puntos rojos
-    if celdas_sucias:
-        x_sucias, y_sucias = zip(*celdas_sucias)
-        ax.scatter(x_sucias, y_sucias, color='red', label='Celdas Sucias', s=100)
+    # Establecemos la imagen de fondo
+    ax.imshow(background_img, extent=[-1, ancho, -1, alto], aspect='auto')
 
-    # Mostramos nuestras aspiradoras como los puntos azules
-    if posiciones_aspiradoras:
-        x_aspiradoras, y_aspiradoras = zip(*posiciones_aspiradoras)
-        ax.scatter(x_aspiradoras, y_aspiradoras, color='blue', label='Aspiradoras', s=200)
+    # Mostramos las celdas sucias como imágenes
+    for (x, y) in celdas_sucias:
+        imagebox = OffsetImage(celda_sucia_img, zoom=0.1)  # Ajusta zoom según tamaño
+        ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+        ax.add_artist(ab)
 
-    # Configuraciones de nuestro gráfico
+    # Mostramos las aspiradoras como imágenes
+    for (x, y) in posiciones_aspiradoras:
+        imagebox = OffsetImage(aspiradora_img, zoom=0.05)  # Ajusta zoom según tamaño
+        ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+        ax.add_artist(ab)
+
+    # Configuraciones del gráfico
     ax.set_xlim(-1, ancho)
     ax.set_ylim(-1, alto)
     ax.set_title(f"Paso de simulación: {i+1}")
@@ -53,41 +63,41 @@ for i in range(100):
     ax.set_xticks(range(ancho))
     ax.set_yticks(range(alto))
     ax.grid(True)
-    ax.legend()
 
-    # Hacemos pausas para que se vea el efecto de la animación
+    # Pausa para animación
     plt.pause(0.1)
 
-    # Verificamos si todas las celdas están limpias y terminamos la simulación en dado caso
+    # Finaliza si todas las celdas están limpias
     if not celdas_sucias:
         print("Todas las celdas están limpias. Terminando la simulación.")
         break
 
-# Obtenemos los resultados finales
+# Obtener resultados finales
 completado, porcentaje_limpio, total_movimientos, tiempo_ejecucion = modelo.obtener_resultados()
 
-# Una vez que se haya terminado la simulación limpiamos el gráfico para enseñar los resultados
+# Mostrar resultados finales en el gráfico
 ax.clear()
 
-# Mostramos las celdas que quedaron sucias
-if modelo.celdas_sucias:
-    x_sucias, y_sucias = zip(*modelo.celdas_sucias)
-    ax.scatter(x_sucias, y_sucias, color='red', label='Celdas Sucias', s=100)
+ax.imshow(background_img, extent=[-1, ancho, -1, alto], aspect='auto')
 
-# Mostramos a nuestras aspiradoras en su posición final
-if posiciones_aspiradoras:
-    x_aspiradoras, y_aspiradoras = zip(*posiciones_aspiradoras)
-    ax.scatter(x_aspiradoras, y_aspiradoras, color='blue', label='Aspiradoras', s=200)
+# Imágenes de celdas sucias restantes
+for (x, y) in modelo.celdas_sucias:
+    imagebox = OffsetImage(celda_sucia_img, zoom=0.1)
+    ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+    ax.add_artist(ab)
 
-# Configuraciones para mostrar los resultados obtenidos
+# Imágenes de aspiradoras en posición final
+for (x, y) in posiciones_aspiradoras:
+    imagebox = OffsetImage(aspiradora_img, zoom=0.05)
+    ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+    ax.add_artist(ab)
+
+# Configuración final
 ax.set_xlim(-1, ancho)
 ax.set_ylim(-1, alto)
 ax.set_xticks(range(ancho))
 ax.set_yticks(range(alto))
 ax.grid(True)
-ax.legend()
-
-# Finalmente mostramos nuestros resultados obtenidos
 ax.set_title(f"Simulación Finalizada\n"
              f"Porcentaje Limpio: {porcentaje_limpio:.2f}%\n"
              f"Movimientos Totales: {total_movimientos}\n"
